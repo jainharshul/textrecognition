@@ -1,6 +1,6 @@
-# textrecognition
+#text recognition
 
-current errors
+current errors 
 
 /Users/harshuljain/PycharmProjects/pythonProject/venv/lib/python3.9/site-packages/urllib3/__init__.py:34: NotOpenSSLWarning: urllib3 v2.0 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
   warnings.warn(
