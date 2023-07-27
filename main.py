@@ -2,27 +2,30 @@ import cv2
 import imutils
 from skimage.filters import threshold_local
 from transform import perspective_transform
+from PIL import Image
+from pytesseract import pytesseract
+import enum
 
 # Loading and displaying the original image
-original_img = cv2.imread('image/coconut.jpeg')
+original_img = cv2.imread('image/tesla.jpeg')
 copy = original_img.copy()
 cv2.waitKey(1)
 
 ratio = original_img.shape[0] / 500.0
 img_resize = imutils.resize(original_img, height=500)
-cv2.imshow('Resized image', img_resize)
-cv2.waitKey(0)
+#cv2.imshow('Resized image', img_resize)
+#cv2.waitKey(0)
 
 gray_image = cv2.cvtColor(img_resize, cv2.COLOR_BGR2GRAY)
-cv2.imshow('Grayed Image', gray_image)
-cv2.waitKey(0)
+#cv2.imshow('Grayed Image', gray_image)
+#cv2.waitKey(0)
 
 blurred_image = cv2.GaussianBlur(gray_image, (5, 5), 0)
-edged_img = cv2.Canny(blurred_image, 75, 200)
-cv2.imshow('Image edges', edged_img)
-cv2.waitKey(0)
+#edged_img = cv2.Canny(blurred_image, 75, 200)
+#cv2.imshow('Image edges', edged_img)
+#cv2.waitKey(0)
 
-cnts, _ = cv2.findContours(edged_img, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+cnts, _ = cv2.findContours(blurred_image, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 cnts = sorted(cnts, key=cv2.contourArea, reverse=True)[:5]
 for c in cnts:
     peri = cv2.arcLength(c, True)
@@ -51,3 +54,36 @@ cv2.imwrite('./'+'scan'+'.png',warped)
 cv2.imshow("Final Scanned image", imutils.resize(warped, height=650))
 cv2.waitKey(0)
 cv2.destroyAllWindows()
+
+
+
+from PIL import Image
+from pytesseract import pytesseract
+import enum
+
+
+class OS(enum.Enum):
+    Mac = 0
+    Windows = 1
+
+
+class Language(enum.Enum):
+    ENG = 'eng'
+
+
+class ImageReader:
+
+    def __init__(self, os: OS):
+        if os == OS.Mac:
+            print('Running on Mac\n')
+
+    def extract_text(self, image: str, lang: str) -> str:
+        img = Image.open(image)
+        extracted_text = pytesseract.image_to_string(img, lang= lang)
+        return extracted_text
+
+
+if __name__ == '__main__':
+    ir = ImageReader(OS.Mac)
+    text = ir.extract_text('scan.png', lang = 'eng')
+    print(text)
